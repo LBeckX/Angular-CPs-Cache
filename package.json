@@ -1,0 +1,29 @@
+{
+  "name": "cps-cache",
+  "version": "0.0.1",
+  "description": "Angular service to manage cache objects and provide them globally",
+  "keywords": [
+    "angular",
+    "cache",
+    "rxjs",
+    "cps",
+    "service"
+  ],
+  "author": {
+    "name": "LBeckX",
+    "email": "lb@cashplayers.de",
+    "url": "https://github.com/LBeckX"
+  },
+  "bugs": {
+    "url": "https://github.com/LBeckX/Angular-CPs-Cache/issues",
+    "email": "lb@cashplayers.de"
+  },
+  "peerDependencies": {
+    "@angular/common": "^10.1.5",
+    "@angular/core": "^10.1.5"
+  },
+  "dependencies": {
+    "rxjs": "^6.6.0",
+    "tslib": "^2.0.0"
+  }
+}
