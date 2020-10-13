@@ -1,6 +1,6 @@
 {
   "name": "cps-cache",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Angular service to manage cache objects and provide them globally",
   "keywords": [
     "angular",
