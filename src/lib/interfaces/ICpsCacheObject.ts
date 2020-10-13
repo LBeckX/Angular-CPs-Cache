@@ -1,5 +1,6 @@
 export interface ICpsCacheObject {
   key: string;
   data: any;
-  time: string;
+  since: string;
+  expire: string;
 }

@@ -4,7 +4,7 @@ import {BehaviorSubject} from 'rxjs';
 import {ICpsCacheObject} from './interfaces/ICpsCacheObject';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'any'
 })
 export class CpsCacheService {
 
@@ -13,35 +13,40 @@ export class CpsCacheService {
   /**
    * @param key
    * @param data
+   * @param expire
    */
-  public set(key: string, data: any = null): ICpsCacheObject {
-    const co: ICpsCacheObject = {key, data, time: (new Date()).toString()};
+  public set(key: string, data: any = null, expire: Date = null): any {
+    const e = expire ? expire.toString() : null;
+    const cacheObject: ICpsCacheObject = {key, data, since: (new Date()).toString(), expire: e};
 
     if (this.cache[key]) {
-      this.cache[key].next(co);
+      this.cache[key].next(cacheObject);
     } else {
-      this.cache[key] = new BehaviorSubject(co);
+      this.cache[key] = new BehaviorSubject(cacheObject);
     }
 
-    localStorage.setItem(key, CpsCacheService._getStringFromData(data));
+    localStorage.setItem(key, CpsCacheService._getStringFromData(cacheObject));
 
-    return co;
+    return cacheObject;
   }
 
   /**
    * @param key
    */
   public get(key: string): ICpsCacheObject {
+    let cacheObject: ICpsCacheObject = null;
+
     if (this.has(key, true)) {
-      return this.cache[key].getValue();
+      cacheObject = this.cache[key].getValue();
+    } else if (this.has(key, false)) {
+      cacheObject = CpsCacheService._getDataFromString(localStorage.getItem(key));
     }
 
-    if (this.has(key, false)) {
-      const data = CpsCacheService._getDataFromString(localStorage.getItem(key));
-      return this.set(key, data);
+    if (cacheObject && (!cacheObject.expire || (new Date(cacheObject.expire).getTime() > Date.now()))) {
+      return cacheObject;
     }
 
-    return null;
+    return this.set(key, null);
   }
 
   /**
@@ -50,30 +55,39 @@ export class CpsCacheService {
   public getObserver(key: string): BehaviorSubject<ICpsCacheObject> {
     if (!this.has(key, true) && this.has(key, false)) {
       this.set(key, this.get(key).data);
-    } else if (!this.has(key, true) && !this.has(key, false)) {
+    } else if ((!this.has(key, true) && !this.has(key, false)) || !this.get(key)) {
       this.set(key, null);
     }
+
     return this.cache[key];
   }
 
   /**
    * @param key
    */
-  public delete(key: string): void {
-    delete this.cache[key];
+  public delete(key: string): ICpsCacheObject {
+    const cacheObject: ICpsCacheObject = this.get(key);
+
+    if (this.has(key, true)) {
+      this.cache[key].complete();
+      delete this.cache[key];
+    }
+
     localStorage.removeItem(key);
+
+    return cacheObject;
   }
 
   /**
    *
    */
   public clear(): void {
-    for (const i in this.cache) {
-      if (!this.cache.hasOwnProperty(i)) {
+    for (const key in this.cache) {
+      if (!this.cache.hasOwnProperty(key)) {
         continue;
       }
-      this.cache[i].complete();
-      delete this.cache[i];
+      this.cache[key].complete();
+      delete this.cache[key];
     }
     localStorage.clear();
   }
@@ -93,7 +107,7 @@ export class CpsCacheService {
    * @param data
    * @private
    */
-  private static _getStringFromData(data: any): string | null {
+  private static _getStringFromData(data: any): string {
     switch (typeof data) {
       case 'string':
         return data;

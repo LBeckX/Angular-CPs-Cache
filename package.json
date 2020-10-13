@@ -1,6 +1,6 @@
 {
   "name": "cps-cache",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Angular service to manage cache objects and provide them globally",
   "keywords": [
     "angular",
@@ -19,8 +19,8 @@
     "email": "lb@cashplayers.de"
   },
   "peerDependencies": {
-    "@angular/common": "^10.1.5",
-    "@angular/core": "^10.1.5"
+    "@angular/common": "^9.1.0",
+    "@angular/core": "^9.1.0"
   },
   "dependencies": {
     "rxjs": "^6.6.0",
