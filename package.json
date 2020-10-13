@@ -14,6 +14,7 @@
     "email": "lb@cashplayers.de",
     "url": "https://github.com/LBeckX"
   },
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/LBeckX/Angular-CPs-Cache/issues",
     "email": "lb@cashplayers.de"
